@@ -1,5 +1,36 @@
+const { rawListeners } = require("./database");
 const database = require("./database");
 
+// GET USERS
+
+const getUsers = (req, res) => {
+  let sql = "select * from users";
+  const sqlValues = [];
+
+  if (req.query.city) {
+    sql = sql + " where city = ?";
+    sqlValues.push(req.query.city);
+    if (req.query.language) {
+      sql = sql + " and language = ?";
+      sqlValues.push(req.query.language);
+    }
+  } else if (req.query.language) {
+    sql = sql + " where language = ?";
+    sqlValues.push(req.query.language);
+  }
+
+  database
+    .query(sql, sqlValues)
+    .then(([users]) => {
+      res.json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
+// GET USERS BY ID
 const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -11,18 +42,6 @@ const getUsersById = (req, res) => {
       } else {
         res.status(404).send("Not Found");
       }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error retrieving data from database");
-    });
-};
-
-const getUsers = (req, res) => {
-  database
-    .query("select * from users")
-    .then(([users]) => {
-      res.json(users);
     })
     .catch((err) => {
       console.error(err);
