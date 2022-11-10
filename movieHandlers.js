@@ -1,4 +1,36 @@
+const { query } = require("./database");
 const database = require("./database");
+
+// GET MOVIES
+
+const getMovies = (req, res) => {
+  let sql = "select * from movies";
+  const sqlValues = [];
+
+  if (req.query.color) {
+    sql = sql + " WHERE color = ?";
+    sqlValues.push(req.query.color);
+    if (req.query.max_duration) {
+      sql = sql + " AND duration <= ?";
+      sqlValues.push(req.query.max_duration);
+    } else if (req.query.max_duration) {
+      sql = sql + " WHERE duration <= ?";
+      sqlValues.push(req.query.max_duration);
+    }
+  }
+
+  database
+    .query(sql, sqlValues)
+    .then(([movies]) => {
+      res.json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
+//GET MOVIES BY ID
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -10,17 +42,6 @@ const getMovieById = (req, res) => {
       } else {
         res.status(404).send("Not Found");
       }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error retrieving data from database");
-    });
-};
-const getMovies = (req, res) => {
-  database
-    .query("select * from movies")
-    .then(([movies]) => {
-      res.json(movies);
     })
     .catch((err) => {
       console.error(err);
