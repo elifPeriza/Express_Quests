@@ -1,4 +1,3 @@
-const { rawListeners } = require("./database");
 const database = require("./database");
 
 // GET USERS
