@@ -16,6 +16,7 @@ app.get("/", welcome);
 
 const movieHandlers = require("./movieHandlers");
 const userHandlers = require("./userHandlers");
+const { validateMovie } = require("./validators.js");
 
 // GET
 app.get("/api/movies", movieHandlers.getMovies);
@@ -24,7 +25,7 @@ app.get("/api/users", userHandlers.getUsers);
 app.get("/api/users/:id", userHandlers.getUsersById);
 
 // POST
-app.post("/api/movies", movieHandlers.postMovie);
+app.post("/api/movies", validateMovie, movieHandlers.postMovie);
 app.post("/api/users", userHandlers.postUser);
 
 // PUT/UPDATE
